@@ -1,16 +1,15 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css'
 import SimonBtn from './SimonBtn'
 
 function App() { 
   const [colorIdx, setColorIdx] = useState(0)
-  const [colors, setColors] = useState<string[]>(["blue", "green", "red"]);
+  const [colors, setColors] = useState<string[]>(["blue"]);
   const [playTime, setPlayTime] = useState(false)
 
   useEffect(()=>{
     if(!playTime){
       setTimeout(function(){
-        console.log(colorIdx<colors.length -1, !playTime, colorIdx)
         if(colorIdx<colors.length -1 && !playTime){
           setColorIdx(colorIdx+1)
         }else{
@@ -21,15 +20,19 @@ function App() {
     }
   }, [colors, colorIdx, playTime])
 
+  function arrayRandom() {
+    const a = ["blue", "red", "green", "yellow"]
+    return a[Math.floor(Math.random() * a.length)];
+  }
+
   const handleClickButton = (colorPick:string)=>{
     if(playTime){
-      console.log(colorPick)
       if(colors[colorIdx]===colorPick){
         if(colorIdx>=colors.length -1){
           setColorIdx(0)
           setPlayTime(false)
           const arr = colors
-          arr.push("green")
+          arr.push(arrayRandom())
           setColors(arr)
         }else{
           setColorIdx(colorIdx+1)
@@ -37,13 +40,14 @@ function App() {
       }else{
         setColorIdx(0)
         setPlayTime(false)
-        setColors(["blue", "green", "red"])
+        setColors([arrayRandom()])
       }
     }
   }
 
   return (
     <>
+    <h1>{playTime?"A ton tour":"Regarde bien la suite"}</h1>
     <div className='simonGame'>
     <SimonBtn color={"green"} light={colors[colorIdx]==="green"&&!playTime?"On":"Off"} onClick={handleClickButton}></SimonBtn>
     <SimonBtn color={"red"} light={colors[colorIdx]==="red"&&!playTime?"On":"Off"} onClick={handleClickButton}></SimonBtn>

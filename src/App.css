@@ -78,12 +78,24 @@
 }
 
 .light{
-  opacity: 1;
-  filter: drop-shadow(0 0 3rem white);
+  animation: glow 0.5s infinite alternate;
 }
 
 .result{
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+}
+
+@keyframes glow {
+  from {
+    opacity: 0.5;
+    box-shadow: 0 0 10px -10px #aef4af;
+    filter: drop-shadow(0 0 0rem white);
+  }
+  to {
+    box-shadow: 0 0 10px 10px #aef4af;
+    filter: drop-shadow(0 0 3rem white);
+    opacity: 1;
+  }
 }
