@@ -1,33 +1,60 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useCallback, useEffect, useState } from 'react';
 import './App.css'
+import SimonBtn from './SimonBtn'
 
-function App() {
-  const [count, setCount] = useState(0)
+function App() { 
+  const [colorIdx, setColorIdx] = useState(0)
+  const [colors, setColors] = useState<string[]>(["blue", "green", "red"]);
+  const [playTime, setPlayTime] = useState(false)
+
+  useEffect(()=>{
+    if(!playTime){
+      setTimeout(function(){
+        console.log(colorIdx<colors.length -1, !playTime, colorIdx)
+        if(colorIdx<colors.length -1 && !playTime){
+          setColorIdx(colorIdx+1)
+        }else{
+          setColorIdx(0)
+          setPlayTime(true)
+        }
+      }, 1000);
+    }
+  }, [colors, colorIdx, playTime])
+
+  const handleClickButton = (colorPick:string)=>{
+    if(playTime){
+      console.log(colorPick)
+      if(colors[colorIdx]===colorPick){
+        if(colorIdx>=colors.length -1){
+          setColorIdx(0)
+          setPlayTime(false)
+          const arr = colors
+          arr.push("green")
+          setColors(arr)
+        }else{
+          setColorIdx(colorIdx+1)
+        }
+      }else{
+        setColorIdx(0)
+        setPlayTime(false)
+        setColors(["blue", "green", "red"])
+      }
+    }
+  }
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+    <div className='simonGame'>
+    <SimonBtn color={"green"} light={colors[colorIdx]==="green"&&!playTime?"On":"Off"} onClick={handleClickButton}></SimonBtn>
+    <SimonBtn color={"red"} light={colors[colorIdx]==="red"&&!playTime?"On":"Off"} onClick={handleClickButton}></SimonBtn>
+    <SimonBtn color={"yellow"} light={colors[colorIdx]==="yellow"&&!playTime?"On":"Off"} onClick={handleClickButton}></SimonBtn>
+    <SimonBtn color={"blue"} light={colors[colorIdx]==="blue"&&!playTime?"On":"Off"} onClick={handleClickButton}></SimonBtn>
+    </div>
+    <div className='result'>
+      {colors.map((color, index) => (
+        <p key={index}> {color};</p>
+      ))}
+    </div>
     </>
   )
 }
