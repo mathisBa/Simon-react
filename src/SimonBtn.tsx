@@ -7,8 +7,8 @@ interface SimonBtnProps {
 }
 
 export default function SimonBtn({color, light, onClick}: SimonBtnProps){    
+    
     const lightClass = light==="On"?" light": ""
-
     const handleClickSelection = useCallback((colorPick:string)=>{
         onClick(colorPick);
       }, [onClick])

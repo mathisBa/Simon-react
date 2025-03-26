@@ -49,10 +49,10 @@ function App() {
     <>
     <h1>{playTime?"A ton tour":"Regarde bien la suite"}</h1>
     <div className='simonGame'>
-    <SimonBtn color={"green"} light={colors[colorIdx]==="green"&&!playTime?"On":"Off"} onClick={handleClickButton}></SimonBtn>
-    <SimonBtn color={"red"} light={colors[colorIdx]==="red"&&!playTime?"On":"Off"} onClick={handleClickButton}></SimonBtn>
-    <SimonBtn color={"yellow"} light={colors[colorIdx]==="yellow"&&!playTime?"On":"Off"} onClick={handleClickButton}></SimonBtn>
-    <SimonBtn color={"blue"} light={colors[colorIdx]==="blue"&&!playTime?"On":"Off"} onClick={handleClickButton}></SimonBtn>
+    <SimonBtn color={"green"} light={colors[!playTime?colorIdx:colorIdx-1]==="green"?"On":"Off"} onClick={handleClickButton}></SimonBtn>
+    <SimonBtn color={"red"} light={colors[!playTime?colorIdx:colorIdx-1]==="red"?"On":"Off"} onClick={handleClickButton}></SimonBtn>
+    <SimonBtn color={"yellow"} light={colors[!playTime?colorIdx:colorIdx-1]==="yellow"?"On":"Off"} onClick={handleClickButton}></SimonBtn>
+    <SimonBtn color={"blue"} light={colors[!playTime?colorIdx:colorIdx-1]==="blue"?"On":"Off"} onClick={handleClickButton}></SimonBtn>
     </div>
     <div className='result'>
       {colors.map((color, index) => (
