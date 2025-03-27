@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import './App.css'
 import SimonBtn from './SimonBtn'
+import { BeforeInstallPromptEvent } from './types';
 
 function App() { 
   const [colorIdx, setColorIdx] = useState(0);
   const [colors, setColors] = useState<string[]>(["blue"]);
   const [playTime, setPlayTime] = useState(false);
-  const [dlEvent, setDLEvent] = useState<Event | null>(null);
+  const [dlEvent, setDLEvent] = useState<BeforeInstallPromptEvent | null>(null);
   const installButton = document.querySelector("#installBTN");
 
   useEffect(()=>{
@@ -62,9 +63,11 @@ function App() {
       return;
     }
     console.log(dlEvent)
-    // dlEvent.prompt();
-    // const result = await dlEvent.userChoice;
-    // console.log(`Install prompt was: ${result.outcome}`);
+    await dlEvent.prompt();
+    const result = await dlEvent.userChoice;
+    if(result.outcome==="accepted"){
+      installButton?.classList.add("hidden");
+    }
   };
 
   return (
