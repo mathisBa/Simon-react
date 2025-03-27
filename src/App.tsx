@@ -3,9 +3,11 @@ import './App.css'
 import SimonBtn from './SimonBtn'
 
 function App() { 
-  const [colorIdx, setColorIdx] = useState(0)
+  const [colorIdx, setColorIdx] = useState(0);
   const [colors, setColors] = useState<string[]>(["blue"]);
-  const [playTime, setPlayTime] = useState(false)
+  const [playTime, setPlayTime] = useState(false);
+  const [dlEvent, setDLEvent] = useState<Event | null>(null);
+  const installButton = document.querySelector("#installBTN");
 
   useEffect(()=>{
     if(!playTime){
@@ -29,21 +31,42 @@ function App() {
     if(playTime){
       if(colors[colorIdx]===colorPick){
         if(colorIdx>=colors.length -1){
-          setColorIdx(0)
-          setPlayTime(false)
-          const arr = colors
-          arr.push(arrayRandom())
-          setColors(arr)
+          window.navigator.vibrate(1000);
+          const arr = colors;
+          arr.push(arrayRandom());
+          setColorIdx(0);
+          setPlayTime(false);
+          setColors(arr);
         }else{
-          setColorIdx(colorIdx+1)
+          setColorIdx(colorIdx+1);
         }
       }else{
-        setColorIdx(0)
-        setPlayTime(false)
-        setColors([arrayRandom()])
+        setColorIdx(0);
+        setPlayTime(false);
+        setColors([arrayRandom()]);
       }
     }
   }
+
+  useEffect(()=>{
+    window.addEventListener("beforeinstallprompt", (event) => {
+      event.preventDefault();
+      if(installButton){
+        installButton.removeAttribute("hidden");
+      }
+      setDLEvent(event);
+    });
+  }, [dlEvent])
+
+  const handleInstallClick = async () => {
+    if (!dlEvent) {
+      return;
+    }
+    console.log(dlEvent)
+    // dlEvent.prompt();
+    // const result = await dlEvent.userChoice;
+    // console.log(`Install prompt was: ${result.outcome}`);
+  };
 
   return (
     <>
@@ -59,6 +82,9 @@ function App() {
         <p key={index}> {color};</p>
       ))}
     </div>
+    <button onClick={handleInstallClick} id='installBTN'>
+        Installer la PWA
+      </button>
     </>
   )
 }
