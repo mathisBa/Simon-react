@@ -49,13 +49,19 @@ function App() {
   }
 
   useEffect(()=>{
-    window.addEventListener("beforeinstallprompt", (event) => {
-      event.preventDefault();
-      if(installButton){
-        installButton.removeAttribute("hidden");
-      }
-      setDLEvent(event);
-    });
+    const isInstalled = window.matchMedia('(display-mode: standalone)').matches
+    if(isInstalled){
+      installButton?.classList.add("hidden");
+      return
+    }else{
+      window.addEventListener("beforeinstallprompt", (event) => {
+        event.preventDefault();
+        if(installButton){
+          installButton.removeAttribute("hidden");
+        }
+        setDLEvent(event);
+      });
+    }
   }, [dlEvent])
 
   const handleInstallClick = async () => {
