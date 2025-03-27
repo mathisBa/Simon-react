@@ -41,6 +41,13 @@ function App() {
           setColorIdx(colorIdx+1);
         }
       }else{
+        if ("vibrate" in navigator) {
+          console.log("vibrate")
+          navigator.vibrate([100, 30, 100, 30, 100, 30, 200, 30, 200, 30, 200, 30, 100, 30, 100, 30, 100]);
+        } else {
+          console.log("not vibrate")
+          alert("La vibration n'est pas supportée sur ce navigateur.");
+        }
         setColorIdx(0);
         setPlayTime(false);
         setColors([arrayRandom()]);
