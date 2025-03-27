@@ -8,6 +8,7 @@ function App() {
   const [colors, setColors] = useState<string[]>(["blue"]);
   const [playTime, setPlayTime] = useState(false);
   const [dlEvent, setDLEvent] = useState<BeforeInstallPromptEvent | null>(null);
+  const [bestScores, setBestScores] = useState<number[]>([]);
   const installButton = document.querySelector("#installBTN");
 
   const sendNotification = (content:string) => {
@@ -32,6 +33,24 @@ function App() {
       });
     }
   };
+
+  const updateBestScores = (newScore: number) => {
+    const updatedScores = [...bestScores, newScore];
+    updatedScores.sort((a, b) => b - a);
+    const topFive = updatedScores.slice(0, 5);
+    setBestScores(topFive);
+  };
+
+  useEffect(() => {
+    const storedScores = localStorage.getItem('bestScores');
+    if (storedScores) {
+      setBestScores(JSON.parse(storedScores));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('bestScores', JSON.stringify(bestScores));
+  }, [bestScores]);
 
   useEffect(()=>{
     if(!playTime){
@@ -66,10 +85,9 @@ function App() {
       }else{
         if ("vibrate" in navigator) {
           navigator.vibrate([100, 30, 100, 30, 100, 30, 200, 30, 200, 30, 200, 30, 100, 30, 100, 30, 100]);
-        } else {
-          alert("Perdu");
         }
-        sendNotification("Tu as perdu la partie")
+        updateBestScores(colors.length)
+        sendNotification("Tu as perdu la partie");
         setColorIdx(0);
         setPlayTime(false);
         setColors([arrayRandom()]);
@@ -97,7 +115,6 @@ function App() {
     if (!dlEvent) {
       return;
     }
-    console.log(dlEvent)
     await dlEvent.prompt();
     const result = await dlEvent.userChoice;
     if(result.outcome==="accepted"){
@@ -119,9 +136,16 @@ function App() {
         <p key={index}> {color};</p>
       ))}
     </div>
+    <h3>Meilleurs scores</h3>
+      <ul>
+        {bestScores.map((s, index) => (
+          <li key={index}>{s}</li>
+        ))}
+      </ul>
     <button onClick={handleInstallClick} id='installBTN'>
         Installer la PWA
       </button>
+
     </>
   )
 }
