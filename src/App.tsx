@@ -9,7 +9,16 @@ function App() {
   const [playTime, setPlayTime] = useState(false);
   const [dlEvent, setDLEvent] = useState<BeforeInstallPromptEvent | null>(null);
   const [bestScores, setBestScores] = useState<number[]>([]);
+  const [voiceColor, setVoiceColor] = useState("")
   const installButton = document.querySelector("#installBTN");
+  const grammar = "#JSGF V1.0; grammar colors; public <color> =  yellow | blue | red | green"
+  const SpeechRecognition = window.SpeechRecognition || (window as any).webkitSpeechRecognition;
+  const recognition = new SpeechRecognition();
+  const SpeechGrammarList = window.SpeechGrammarList || (window as any).webkitSpeechGrammarList;
+  var speechRecognitionList = new SpeechGrammarList();
+  speechRecognitionList.addFromString(grammar, 1);
+  recognition.grammars = speechRecognitionList;
+  recognition.lang = "en-US";
 
   const sendNotification = (content:string) => {
     if (!("Notification" in window)) {
@@ -55,6 +64,8 @@ function App() {
   useEffect(()=>{
     if(!playTime){
       setTimeout(function(){
+        const utterance = new SpeechSynthesisUtterance(colors[colorIdx]);
+        speechSynthesis.speak(utterance);
         if(colorIdx<colors.length -1 && !playTime){
           setColorIdx(colorIdx+1)
         }else{
@@ -122,30 +133,61 @@ function App() {
     }
   };
 
+  const startVoice = () => {
+    recognition.onresult = (event) => {
+      console.log("Reading voice");
+      const color = event.results[0][0].transcript;
+      setVoiceColor(color);
+    };
+  
+    recognition.onerror = (event) => {
+      console.error("Recognition error", event);
+    };
+  
+    console.log("Start voice");
+    recognition.start();
+    };
+  
+  const endVoice = () => {
+    console.log("End voice")
+    recognition.stop();
+  };
+
+  useEffect(()=>{
+    console.log("Color changed")
+    if(voiceColor != ""){
+      const btn = document.getElementById(voiceColor)
+      btn?.click()
+    }
+  }, [voiceColor])
+
   return (
     <>
-    <h1>{playTime?"A ton tour":"Regarde bien la suite"}</h1>
-    <div className='simonGame'>
-    <SimonBtn color={"green"} light={colors[!playTime?colorIdx:colorIdx-1]==="green"?"On":"Off"} onClick={handleClickButton}></SimonBtn>
-    <SimonBtn color={"red"} light={colors[!playTime?colorIdx:colorIdx-1]==="red"?"On":"Off"} onClick={handleClickButton}></SimonBtn>
-    <SimonBtn color={"yellow"} light={colors[!playTime?colorIdx:colorIdx-1]==="yellow"?"On":"Off"} onClick={handleClickButton}></SimonBtn>
-    <SimonBtn color={"blue"} light={colors[!playTime?colorIdx:colorIdx-1]==="blue"?"On":"Off"} onClick={handleClickButton}></SimonBtn>
-    </div>
-    <div className='result'>
-      {colors.map((color, index) => (
-        <p key={index}> {color};</p>
-      ))}
-    </div>
-    <h3>Meilleurs scores</h3>
-      <ul>
-        {bestScores.map((s, index) => (
-          <li key={index}>{s}</li>
-        ))}
-      </ul>
-    <button onClick={handleInstallClick} id='installBTN'>
-        Installer la PWA
+      <h1>{playTime?"A ton tour":"Regarde bien la suite"}</h1>
+      <div className='simonGame'>
+      <SimonBtn color={"green"} light={colors[!playTime?colorIdx:colorIdx-1]==="green"?"On":"Off"} onClick={handleClickButton} ></SimonBtn>
+      <SimonBtn color={"red"} light={colors[!playTime?colorIdx:colorIdx-1]==="red"?"On":"Off"} onClick={handleClickButton}></SimonBtn>
+      <SimonBtn color={"yellow"} light={colors[!playTime?colorIdx:colorIdx-1]==="yellow"?"On":"Off"} onClick={handleClickButton}></SimonBtn>
+      <SimonBtn color={"blue"} light={colors[!playTime?colorIdx:colorIdx-1]==="blue"?"On":"Off"} onClick={handleClickButton}></SimonBtn>
+      </div>
+      <button onClick={startVoice} onMouseLeave={endVoice}>
+          Dire le résultat
       </button>
-
+      <p>Couleur entendue : {voiceColor}</p>
+      <div className='result'>
+        {colors.map((color, index) => (
+          <p key={index}> {color};</p>
+        ))}
+      </div>
+      <h3>Meilleurs scores</h3>
+        <ul>
+          {bestScores.map((s, index) => (
+            <li key={index}>{s}</li>
+          ))}
+        </ul>
+      <button onClick={handleInstallClick} id='installBTN'>
+          Installer la PWA
+      </button>
     </>
   )
 }

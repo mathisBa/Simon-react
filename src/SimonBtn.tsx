@@ -14,7 +14,7 @@ export default function SimonBtn({color, light, onClick}: SimonBtnProps){
       }, [onClick])
 
     return (
-    <div className={"button " + color + lightClass} onClick={() => handleClickSelection(color)}>
+    <div className={"button " + color + lightClass} onClick={() => handleClickSelection(color)} id={color}>
     </div>
   )
 }

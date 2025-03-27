@@ -103,3 +103,16 @@
 .hidden{
   display: none;
 }
+
+.simonGame:hover{
+  animation: rt 1s infinite alternate;
+}
+
+@keyframes rt {
+  from {
+    rotate: 0deg;
+  }
+  to {
+    rotate: 360deg;
+  }
+}
