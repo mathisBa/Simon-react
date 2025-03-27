@@ -31,7 +31,6 @@ function App() {
     if(playTime){
       if(colors[colorIdx]===colorPick){
         if(colorIdx>=colors.length -1){
-          window.navigator.vibrate(1000);
           const arr = colors;
           arr.push(arrayRandom());
           setColorIdx(0);
