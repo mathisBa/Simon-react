@@ -10,6 +10,29 @@ function App() {
   const [dlEvent, setDLEvent] = useState<BeforeInstallPromptEvent | null>(null);
   const installButton = document.querySelector("#installBTN");
 
+  const sendNotification = (content:string) => {
+    if (!("Notification" in window)) {
+      console.error("This browser does not support notifications.");
+      return;
+    }
+
+    // If permission is already granted, create a notification
+    if (Notification.permission === "granted") {
+      new Notification("Simon!", {
+        body: content,
+      });
+    } else if (Notification.permission !== "denied") {
+      // Otherwise, request permission from the user
+      Notification.requestPermission().then((permission) => {
+        if (permission === "granted") {
+          new Notification("Hello!", {
+            body: content,
+          });
+        }
+      });
+    }
+  };
+
   useEffect(()=>{
     if(!playTime){
       setTimeout(function(){
@@ -42,12 +65,11 @@ function App() {
         }
       }else{
         if ("vibrate" in navigator) {
-          console.log("vibrate")
           navigator.vibrate([100, 30, 100, 30, 100, 30, 200, 30, 200, 30, 200, 30, 100, 30, 100, 30, 100]);
         } else {
-          console.log("not vibrate")
-          alert("La vibration n'est pas supportée sur ce navigateur.");
+          alert("Perdu");
         }
+        sendNotification("Tu as perdu la partie")
         setColorIdx(0);
         setPlayTime(false);
         setColors([arrayRandom()]);
